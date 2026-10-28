@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>E-commerce Customer Behavior | MDS Project</title>
+<meta name="description" content="Team 10's Mathematics for Data Science midterm project on e-commerce customer behavior and returning-customer prediction.">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root{--ink:#172033;--muted:#627089;--bg:#f5f7fb;--card:#fff;--line:#e5eaf2;--blue:#315cf5;--teal:#18a999;--purple:#8257e5}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+a{color:var(--blue);text-decoration:none}.wrap{width:min(1120px,92%);margin:auto}
+nav{display:flex;justify-content:space-between;align-items:center;padding:20px 0;gap:18px;flex-wrap:wrap}.brand{font-weight:800;letter-spacing:-.4px}.navlinks{display:flex;gap:18px;flex-wrap:wrap;font-size:14px}
+.hero{padding:58px 0 44px;background:radial-gradient(circle at 80% 20%,#dce5ff 0,transparent 30%),linear-gradient(135deg,#eef2ff,#f8fbff 65%);border-bottom:1px solid var(--line)}
+.eyebrow{color:var(--blue);font-weight:800;font-size:12px;letter-spacing:1.6px;text-transform:uppercase}
+h1{font-size:clamp(36px,6vw,64px);line-height:1.05;letter-spacing:-2px;margin:15px 0 20px;max-width:850px}
+.lead{font-size:18px;color:#4e5d77;max-width:760px}.pills{display:flex;gap:9px;flex-wrap:wrap;margin-top:25px}.pill{border:1px solid #d6def1;background:#fff;border-radius:999px;padding:7px 12px;font-size:13px;font-weight:650}
+section{padding:46px 0}.section-head{margin-bottom:22px}.section-head h2{font-size:29px;letter-spacing:-.8px;margin:0 0 5px}.section-head p{margin:0;color:var(--muted)}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 7px 25px #18294b08}.kpi-label{font-size:13px;color:var(--muted)}.kpi{font-size:31px;line-height:1.2;font-weight:800;letter-spacing:-1px;margin:8px 0}.kpi-note{font-size:12px;color:var(--muted)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.chart-card h3,.card h3{margin:0 0 5px;font-size:17px}.sub{font-size:13px;color:var(--muted);margin:0 0 16px}.chartbox{height:290px;position:relative}
+.tag{display:inline-block;background:#eef2ff;color:#2848bd;border-radius:8px;padding:4px 9px;font-size:12px;font-weight:750;margin-bottom:10px}
+ul{padding-left:20px}li{margin:7px 0}.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.stepnum{display:inline-grid;place-items:center;background:#e9eeff;color:#315cf5;width:34px;height:34px;border-radius:11px;font-weight:800;margin-bottom:12px}
+.callout{background:#172033;color:#fff;border-radius:18px;padding:25px}.callout p{color:#d0d8e8;margin-bottom:0}.modelgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.model{padding:14px;border:1px solid var(--line);border-radius:12px;background:#fff;font-weight:700;font-size:14px}.note{background:#fff8e7;border:1px solid #f4dfaa;border-radius:12px;padding:14px 16px;color:#75541a;font-size:14px}
+footer{padding:28px 0;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+@media(max-width:800px){.kpis{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}.steps{grid-template-columns:1fr}.modelgrid{grid-template-columns:repeat(2,1fr)}.hero{padding-top:38px}}
+@media(max-width:440px){.kpis{grid-template-columns:1fr 1fr}.kpi{font-size:25px}.navlinks{gap:10px}.card{padding:17px}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <nav><div class="brand">MDS PROJECT <span style="color:var(--blue)">/ TEAM 10</span></div><div class="navlinks"><a href="#overview">Overview</a><a href="#eda">Analysis</a><a href="#models">ML Models</a><a href="#findings">Findings</a></div></nav>
+    <div class="eyebrow">Mathematics for Data Science · Midterm Project</div>
+    <h1>Understanding E-commerce Customer Behavior</h1>
+    <p class="lead">Exploring customer, order, and browsing patterns—and building machine-learning models to predict whether a customer is returning.</p>
+    <div class="pills"><span class="pill">Exploratory Data Analysis</span><span class="pill">Feature Engineering</span><span class="pill">Classification</span><span class="pill">Model Evaluation</span></div>
+  </div>
+</header>
+<main class="wrap">
+<section id="overview">
+  <div class="section-head"><h2>Project at a glance</h2><p>A data-driven look at shopping behavior and customer retention.</p></div>
+  <div class="kpis">
+    <div class="card"><div class="kpi-label">Orders / records</div><div class="kpi">5,000</div><div class="kpi-note">Rows in the supplied dataset</div></div>
+    <div class="card"><div class="kpi-label">Dataset variables</div><div class="kpi">22</div><div class="kpi-note">Including engineered features</div></div>
+    <div class="card"><div class="kpi-label">Returning-customer records</div><div class="kpi">59.8%</div><div class="kpi-note">2,990 records labelled returning</div></div>
+    <div class="card"><div class="kpi-label">Missing values</div><div class="kpi">0</div><div class="kpi-note">In the processed CSV supplied</div></div>
+  </div>
+</section>
+<section>
+  <div class="grid2">
+    <div class="card"><span class="tag">01 · Research question</span><h3>What customer patterns can we observe?</h3><p>How do product categories, payment methods, device types, browsing activity, order values, and delivery experience vary across customer records?</p></div>
+    <div class="card"><span class="tag">02 · Prediction task</span><h3>Can we classify returning customers?</h3><p>The target variable is <code>Is_Returning_Customer</code>: 1 means returning and 0 means not returning. We compare multiple classifiers and evaluate performance on held-out data.</p></div>
+  </div>
+</section>
+<section id="eda">
+  <div class="section-head"><h2>Exploratory data analysis</h2><p>Charts below are calculated from the provided processed dataset.</p></div>
+  <div class="grid2">
+    <div class="card chart-card"><h3>Customer-return label distribution</h3><p class="sub">Share of records in each target class</p><div class="chartbox"><canvas id="targetChart"></canvas></div></div>
+    <div class="card chart-card"><h3>Orders by product category</h3><p class="sub">Number of records in each category</p><div class="chartbox"><canvas id="categoryChart"></canvas></div></div>
+    <div class="card chart-card"><h3>Payment method distribution</h3><p class="sub">Credit cards are the most common method in this dataset</p><div class="chartbox"><canvas id="paymentChart"></canvas></div></div>
+    <div class="card chart-card"><h3>Device type distribution</h3><p class="sub">Records grouped by device type</p><div class="chartbox"><canvas id="deviceChart"></canvas></div></div>
+  </div>
+</section>
+<section id="methods">
+  <div class="section-head"><h2>Methodology</h2><p>From raw records to model evaluation.</p></div>
+  <div class="steps">
+    <div class="card"><div class="stepnum">1</div><h3>Inspect and prepare</h3><p>Review data types, missing values, duplicates, category distributions, and date fields. Derive Year, Month, Day of Week, and Discount Percentage.</p></div>
+    <div class="card"><div class="stepnum">2</div><h3>Explore patterns</h3><p>Summarize numeric variables, compare customer groups, visualize categories and browsing behavior, and examine relationships with the target label.</p></div>
+    <div class="card"><div class="stepnum">3</div><h3>Train and evaluate</h3><p>Use a stratified 70/15/15 train-validation-test split. Scale numerical inputs and one-hot encode categorical inputs for the shared preprocessing pipeline.</p></div>
+  </div>
+</section>
+<section id="models">
+  <div class="section-head"><h2>Machine-learning models</h2><p>Seven classifiers are evaluated using validation accuracy before final test evaluation.</p></div>
+  <div class="modelgrid">
+    <div class="model">Logistic Regression</div><div class="model">Random Forest</div><div class="model">XGBoost</div><div class="model">CatBoost</div><div class="model">Extra Trees</div><div class="model">SVM (RBF)</div><div class="model">HistGradientBoosting</div>
+  </div>
+  <div style="height:16px"></div>
+  <div class="grid2">
+    <div class="card"><h3>Evaluation metrics</h3><ul><li><b>Accuracy:</b> overall share of correct predictions.</li><li><b>Precision:</b> how often predicted returning customers are actually returning.</li><li><b>Recall:</b> how many actual returning customers are identified.</li><li><b>F1-score:</b> balance between precision and recall.</li><li><b>Confusion matrix:</b> correct and incorrect predictions by class.</li></ul></div>
+    <div class="card"><h3>Results to add from your notebook</h3><p>Insert your actual best model, validation accuracy, test accuracy, precision, recall, and F1-score after running the final source code.</p><div class="note">Important: these values are intentionally not guessed. Use the printed results from your final run so your webpage matches your analysis.</div></div>
+  </div>
+</section>
+<section id="findings">
+  <div class="section-head"><h2>Initial observations</h2><p>Descriptive facts from this dataset—not claims of causation.</p></div>
+  <div class="grid2">
+    <div class="card"><h3>Returning-customer label</h3><p>2,990 of 5,000 records (59.8%) are labelled returning customers; 2,010 (40.2%) are labelled not returning.</p></div>
+    <div class="card"><h3>Shopping patterns</h3><p>Sports is the largest product category by record count (667). Credit Card is the most common payment method (2,012 records), and Mobile is the most common device type (2,795 records).</p></div>
+    <div class="card"><h3>Browsing behavior</h3><p>Average session duration is about 14.6 minutes, and the average number of pages viewed is about 9.0 per record.</p></div>
+    <div class="card"><h3>Data quality</h3><p>The supplied processed CSV contains 5,000 rows and 22 columns, with no missing values and no duplicate rows.</p></div>
+  </div>
+</section>
+<section>
+  <div class="callout"><h2 style="margin:0">Conclusion</h2><p>This project combines descriptive analysis with supervised classification to study e-commerce customer behavior. The analysis summarizes customer and order patterns, while model comparison tests how well different algorithms identify returning-customer records. Final model-performance conclusions should be reported using the actual held-out test results.</p></div>
+</section>
+<section id="team">
+  <div class="section-head"><h2>Project team</h2><p>Team 10 · Mathematics for Data Science</p></div>
+  <div class="card"><p><b>Team members:</b> Add all team members' names and roll numbers here before publishing.</p><p><b>Tools:</b> Python, Pandas, NumPy, Matplotlib, Seaborn, Scikit-learn, XGBoost, CatBoost.</p></div>
+</section>
+</main>
+<footer><div class="wrap">MDS Midterm Data Analysis Project · Team 10 <span style="float:right">Hosted with GitHub Pages</span></div></footer>
+<script>
+const common={responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}};
+new Chart(document.getElementById('targetChart'),{type:'doughnut',data:{labels:['Returning (1)','Not returning (0)'],datasets:[{data:[2990,2010]}]},options:common});
+new Chart(document.getElementById('categoryChart'),{type:'bar',data:{labels:['Sports','Electronics','Fashion','Beauty','Home & Garden','Food','Books','Toys'],datasets:[{label:'Records',data:[667,624,622,621,621,619,616,610]}]},options:{...common,scales:{y:{beginAtZero:true}},plugins:{legend:{display:false}}}});
+new Chart(document.getElementById('paymentChart'),{type:'bar',data:{labels:['Credit Card','Debit Card','Digital Wallet','Bank Transfer','Cash on Delivery'],datasets:[{label:'Records',data:[2012,1265,965,510,248]}]},options:{...common,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true}}}});
+new Chart(document.getElementById('deviceChart'),{type:'doughnut',data:{labels:['Mobile','Desktop','Tablet'],datasets:[{data:[2795,1711,494]}]},options:common});
+</script>
+</body>
+</html>
